@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk,filedialog
 from tkinter import messagebox
 import mysql.connector
 import re
@@ -21,38 +21,131 @@ def go_back(frame):
 base_frame = tk.Frame(root)
 base_frame.place(relheight=1, relwidth=1)
 
-#donate
+#community
+ # Create main application window
+comm= tk.Frame(base_frame)
+comm.place(relheight=1, relwidth=1)
+
+def open_image():
+    file_path = filedialog.askopenfilename(filetypes=[("Image files", "*.png;*.jpg;*.jpeg;*.gif")])
+    if file_path:
+        image = tk.PhotoImage(file=file_path)
+        image_label.config(image=image)
+        image_label.image = image  # Keep a reference to avoid garbage collection
+
+def submit_view():
+    view_text = views_entry.get("1.0", "end-1c")  # Get text from the text entry
+    # You can do something with the submitted view, such as print it
+    print("Submitted view:", view_text)
+
+def create_webpage():
+   
+    
+    # Set the background color of the comm window to "indianred"
+    comm.configure(background='indianred')
+
+    # Create a custom font for the title
+    title_font = ('Arial', 30, 'bold')
+
+    # Create a frame for the title with a colored background
+    title_frame = ttk.Frame(comm, style="Title.TFrame")
+    title_frame.pack(pady=20)
+    title_frame.grid_columnconfigure(0, weight=1)
+
+    # Create a label for the title
+    title_label = ttk.Label(title_frame, text="COMMUNITY PAGE", font=title_font)
+    title_label.grid(row=0, column=0, sticky='nsew')
+
+    # Configure a custom style for the title frame with a light blue background
+    style = ttk.Style()
+    style.configure("Title.TFrame", background="lightblue")
+
+    # Essay description
+    essay_text = """\
+    Blood donation is a critical aspect of healthcare systems worldwide, playing a vital role in saving lives, supporting medical procedures, and maintaining public health. Each donation can help multiple individuals in need, whether they are undergoing surgery, recovering from a serious illness or injury, or living with a chronic condition. 
+    By participating in blood donation initiatives, individuals can make a tangible difference in the lives of others and contribute to the well-being of their communities.
+
+    DonorHub is an online blood donating service provider platform which aids in individuals and organizations to connect with each other during necessary times, also promoting volunteers to come forward for this righteous act of blood donation.
+    """
+
+    # Create a label for the essay description with increased font size
+    essay_label = ttk.Label(comm, text=essay_text, wraplength=600, font=("Arial", 14))
+    essay_label.pack(padx=20, pady=10)
+
+    # Create a text field for users to post their views
+    views_frame = ttk.Frame(comm)
+    views_frame.pack(pady=10)
+
+    post_view_label = ttk.Label(views_frame, text="POST YOUR VIEW", font=("Arial", 12, "bold"))
+    post_view_label.grid(row=0, column=0, padx=5, pady=5)
+
+    global views_entry
+    views_entry = tk.Text(views_frame, height=5, width=50)
+    views_entry.grid(row=1, column=0, padx=5, pady=5)
+
+    # Create a submit button
+    submit_button = ttk.Button(views_frame, text="Submit", command=submit_view)
+    submit_button.grid(row=2, column=0, padx=5, pady=5)
+
+    # Create a button to open the file dialog for image uploading
+    open_button = ttk.Button(comm, text="Upload Image", command=open_image)
+    open_button.pack(pady=10)
+
+    # Create a label to display the selected image
+    global image_label
+    image_label = ttk.Label(comm)
+    image_label.pack()
+
+# Call the function to create the webpage
+create_webpage()
+
+# donate
 donate = tk.Frame(base_frame)
 donate.place(relheight=1, relwidth=1)
+
 def search_slot():
-    location = location_entry.get()
-    preferred_date = preferred_date_entry.get()
+    # Placeholder function for search functionality
+    print("Search slot functionality to be implemented.")
 
-    # Add your search slot logic here
-    print("Location:", location)
-    print("Preferred Date:", preferred_date)
+# Set window size
+window_width = 400
+window_height = 200
+screen_width = donate.winfo_screenwidth()
+screen_height = donate.winfo_screenheight()
+x_coordinate = int((screen_width / 2) - (window_width / 2))
+y_coordinate = int((screen_height / 2) - (window_height / 2))
+root.geometry("{}x{}+{}+{}".format(window_width, window_height, x_coordinate, y_coordinate))
 
-location_label = ttk.Label(donate, text="Location:")
-location_label.grid(row=0, column=0, padx=10, pady=5, sticky="e")
-location_entry = ttk.Entry(donate, width=30)
-location_entry.grid(row=0, column=1, padx=10, pady=5, sticky="w")
+# Title label
+title_label = ttk.Label(donate, text="Donate Blood", font=("Helvetica", 18))
+title_label.pack(pady=10)
 
-preferred_date_label = ttk.Label(donate, text="Preferred Date:")
-preferred_date_label.grid(row=1, column=0, padx=10, pady=5, sticky="e")
-preferred_date_entry = ttk.Entry(donate, width=30)
-preferred_date_entry.grid(row=1, column=1, padx=10, pady=5, sticky="w")
+# Location label and entry
+location_label = ttk.Label(donate, text="Preferred Location:")
+location_label.pack()
+location_entry = ttk.Entry(donate)
+location_entry.pack(pady=5)
 
+# Date label and entry
+date_label = ttk.Label(donate, text="Date:")
+date_label.pack()
+date_entry = ttk.Entry(donate)
+date_entry.pack(pady=5)
+
+# Time label and entry
+time_label = ttk.Label(donate, text="Time:")
+time_label.pack()
+time_entry = ttk.Entry(donate)
+time_entry.pack(pady=5)
+
+# Search Slot button
 search_button = ttk.Button(donate, text="Search Slot", command=search_slot)
-search_button.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
+search_button.pack(pady=10)
 
-table_headers = ["Location", "Date", "Time Slot"]
-for i, header in enumerate(table_headers):
-    label = ttk.Label(donate, text=header)
-    label.grid(row=1, column=i, padx=10, pady=5)
-donate.grid_rowconfigure(0, weight=1)
-donate.grid_columnconfigure(0, weight=1)
+back_button = ttk.Button(donate, text="Back", command=lambda: go_back(donate), style="Custom.TButton")
+back_button.pack(pady=10)
 
-#findadonor
+# findadonor
 find = tk.Frame(base_frame)
 find.place(relheight=1, relwidth=1)
 
@@ -129,8 +222,8 @@ submit_button.pack()
 back_button = ttk.Button(find, text="Back", command=lambda: go_back(find), style="Custom.TButton")
 back_button.pack()
 
-#main page
-main= tk.Frame(base_frame)
+# main page
+main = tk.Frame(base_frame)
 main.place(relheight=1, relwidth=1)
 
 def find_donor():
@@ -148,7 +241,7 @@ find_donor_btn.pack(fill=tk.BOTH, padx=10, pady=5)
 donate_blood_btn = tk.Button(main, text="Donate Blood", command=lambda: [donate_blood(), show_frame(donate)])
 donate_blood_btn.pack(fill=tk.BOTH, padx=10, pady=5)
 
-community_page_btn = tk.Button(main, text="Community Page", command=community_page)
+community_page_btn = tk.Button(main, text="Community Page", command=lambda: [community_page(), show_frame(comm)])
 community_page_btn.pack(fill=tk.BOTH, padx=10, pady=5)
 
 # login page
